@@ -12,9 +12,9 @@ public class BruteCollinearPoints {
         segments = new ArrayList<>();
 
         for (int p = 0; p < points.length-3; p++) {
-            for (int q = 1; q < points.length-2; q++) {
-                for (int r = 2; r < points.length-1; r++) {
-                    for (int s = 3; s < points.length; s++) {
+            for (int q = p + 1; q < points.length-2; q++) {
+                for (int r = q + 1; r < points.length-1; r++) {
+                    for (int s = r + 1; s < points.length; s++) {
                         if (points[p] == null || points[q] == null || points[r] == null || points[s] == null) {
                             throw new IllegalArgumentException("No point in points array should be null.");
                         }
