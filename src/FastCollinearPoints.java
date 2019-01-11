@@ -6,6 +6,11 @@ public class FastCollinearPoints {
     private final ArrayList<Point[]> segments;
 
     public FastCollinearPoints(Point[] points) {
+        // todo remove slope object. Sort each point based on a a passed origin point.
+        // todo check if the segment you are adding has already been added.
+        // todo should be able to check the slope of a point on the line with the
+        // todo existing segment.
+        
         // finds all line segments containing 4 or more points
         segments = new ArrayList<>();
 
@@ -102,6 +107,8 @@ public class FastCollinearPoints {
             } else if (curSegment.size() >= 3) {
                 addSegment(curSegment);
                 curSegment = new ArrayList<>();
+                curSegment.add(slopes[i]);
+                curSlope = slopes[i].slope;
             } else {
                 curSegment = new ArrayList<>();
                 curSegment.add(slopes[i]);
@@ -128,7 +135,7 @@ public class FastCollinearPoints {
         boolean add = true;
 
         for (Point[] p : segments) {
-            if (p[0].compareTo(min) == 0 && p[1].compareTo(max) == 0) {
+            if (p[0].compareTo(min) == 0 || p[1].compareTo(max) == 0) {
                 add = false;
                 break;
             }
