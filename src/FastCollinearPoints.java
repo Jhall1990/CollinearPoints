@@ -102,6 +102,8 @@ public class FastCollinearPoints {
             } else if (curSegment.size() >= 3) {
                 addSegment(curSegment);
                 curSegment = new ArrayList<>();
+                curSegment.add(slopes[i]);
+                curSlope = slopes[i].slope;
             } else {
                 curSegment = new ArrayList<>();
                 curSegment.add(slopes[i]);
@@ -128,7 +130,7 @@ public class FastCollinearPoints {
         boolean add = true;
 
         for (Point[] p : segments) {
-            if (p[0].compareTo(min) == 0 && p[1].compareTo(max) == 0) {
+            if (p[0].compareTo(min) == 0 || p[1].compareTo(max) == 0) {
                 add = false;
                 break;
             }
