@@ -6,6 +6,11 @@ public class FastCollinearPoints {
     private final ArrayList<Point[]> segments;
 
     public FastCollinearPoints(Point[] points) {
+        // todo remove slope object. Sort each point based on a a passed origin point.
+        // todo check if the segment you are adding has already been added.
+        // todo should be able to check the slope of a point on the line with the
+        // todo existing segment.
+        
         // finds all line segments containing 4 or more points
         segments = new ArrayList<>();
 
