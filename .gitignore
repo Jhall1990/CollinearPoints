@@ -1,2 +1,4 @@
-.idea
-src/edu
+out/*
+.idea/*
+src/edu/*
+src/tests/*
