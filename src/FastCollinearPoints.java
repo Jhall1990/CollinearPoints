@@ -15,10 +15,11 @@ public class FastCollinearPoints {
 
         // finds all line segments containing 4 or more points
         segments = new ArrayList<>();
+        Point[] pointsCopy = Arrays.copyOf(points, points.length);
 
-        for (int i = 0; i < points.length - 1; i++) {
-            sort(points[i], points);
-            findCollinear(points);
+        for (Point p : points) {
+            sort(p, pointsCopy);
+            findCollinear(pointsCopy);
         }
 
         lines = new LineSegment[segments.size()];
@@ -110,13 +111,12 @@ public class FastCollinearPoints {
 
         for (int i = 1; i < points.length; i++) {
             Point p = points[i];
-            double s = origin.slopeTo(p);
 
             // Check the points slope against the current slope. If it's the same
             // add the point to the current segment.
             if (origin.compareTo(p) == 0)
                 throw new IllegalArgumentException("Points array cannot have duplicate entries.");
-            else if (curSegment.size() > 0 && slopeCompare.compare(curSegment.get(0), p) == 0) {
+            else if (!curSegment.isEmpty() && slopeCompare.compare(curSegment.get(0), p) == 0) {
                 curSegment.add(p);
 
                 if (min.compareTo(p) > 0)
@@ -130,8 +130,8 @@ public class FastCollinearPoints {
                 // current slope.
             } else {
                 if (curSegment.size() >= 3)
-                    if (origin.compareTo(min) < 0 || origin.compareTo(max) > 0)
-                        segments.add(new Point[]{min, max});
+                    if (origin.compareTo(min) < 0)
+                        segments.add(new Point[]{origin, max});
 
                 curSegment = new ArrayList<>();
                 curSegment.add(p);
@@ -144,7 +144,7 @@ public class FastCollinearPoints {
         // to the segments array. This is a final check to see if the current
         // segment is long enough to be added.
         if (curSegment.size() >= 3)
-            if (origin.compareTo(min) < 0 || origin.compareTo(max) > 0)
-                segments.add(new Point[]{min, max});
+            if (origin.compareTo(min) < 0)
+                segments.add(new Point[]{origin, max});
     }
 }
