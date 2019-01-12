@@ -25,12 +25,12 @@ public class Client {
         StdDraw.show();
 
         // print and draw the line segments
-        BruteCollinearPoints brute = new BruteCollinearPoints(points);
-
-        System.out.println("Brute:");
-        for (LineSegment segment : brute.segments()) {
-            StdOut.println(segment);
-        }
+//        BruteCollinearPoints brute = new BruteCollinearPoints(points);
+//
+//        System.out.println("Brute:");
+//        for (LineSegment segment : brute.segments()) {
+//            StdOut.println(segment);
+//        }
 
         FastCollinearPoints fast = new FastCollinearPoints(points);
 

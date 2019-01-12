@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class FastCollinearPoints {
     private final LineSegment[] lines;
@@ -16,9 +17,8 @@ public class FastCollinearPoints {
         segments = new ArrayList<>();
 
         for (int i = 0; i < points.length - 1; i++) {
-            Point[] subArray = Arrays.copyOfRange(points, i + 1, points.length);
-            sort(points[i], subArray);
-            findCollinear(points[i], subArray);
+            sort(points[i], points);
+            findCollinear(points);
         }
 
         lines = new LineSegment[segments.size()];
@@ -94,81 +94,57 @@ public class FastCollinearPoints {
         return p1Slope < p2Slope;
     }
 
-    private void findCollinear(Point origin, Point[] points) {
+    private void findCollinear(Point[] points) {
         // This function iterates over each point in the point array and checks
         // It's slope against the current slope. It builds segments and checks if
         // they needed to be added by calling addSegment().
-        if (origin == null || points[0] == null)
+        Point origin = points[0];
+
+        if (origin == null)
             throw new IllegalArgumentException("No point in points array can be null");
 
-        double curSlope = origin.slopeTo(points[0]);
+        Point min = origin;
+        Point max = origin;
         ArrayList<Point> curSegment = new ArrayList<>();
+        Comparator<Point> slopeCompare = origin.slopeOrder();
 
-        for (Point p : points) {
-            double slope = origin.slopeTo(p);
+        for (int i = 1; i < points.length; i++) {
+            Point p = points[i];
+            double s = origin.slopeTo(p);
 
             // Check the points slope against the current slope. If it's the same
             // add the point to the current segment.
             if (origin.compareTo(p) == 0)
                 throw new IllegalArgumentException("Points array cannot have duplicate entries.");
-            else if (Double.compare(curSlope, slope) == 0) {
+            else if (curSegment.size() > 0 && slopeCompare.compare(curSegment.get(0), p) == 0) {
                 curSegment.add(p);
-            // If the slope is different and the current segment has more than 3
-            // entries add it to the segment array (if needed). Then create a new
-            // current segment array and add the current point. Then update the
-            // current slope.
+
+                if (min.compareTo(p) > 0)
+                    min = p;
+                else if (max.compareTo(p) < 0)
+                    max = p;
+
+                // If the slope is different and the current segment has more than 3
+                // entries add it to the segment array (if needed). Then create a new
+                // current segment array and add the current point. Then update the
+                // current slope.
             } else {
-                if (curSegment.size() >= 3) {
-                    addSegment(origin, curSegment);
-                }
+                if (curSegment.size() >= 3)
+                    if (origin.compareTo(min) < 0 || origin.compareTo(max) > 0)
+                        segments.add(new Point[]{min, max});
 
                 curSegment = new ArrayList<>();
                 curSegment.add(p);
-                curSlope = origin.slopeTo(p);
+                min = p;
+                max = p;
             }
         }
 
         // If the last point matches the current slope it won't be added
         // to the segments array. This is a final check to see if the current
         // segment is long enough to be added.
-        if (curSegment.size() >= 3) {
-            addSegment(origin, curSegment);
-        }
-    }
-
-    private void addSegment(Point origin, ArrayList<Point> segment) {
-        // This function checks to see if the passed segment should be added to the
-        // segments array.
-
-        // First we get the min and max points within the segment.
-        Point min = origin;
-        Point max = origin;
-
-        for (Point p : segment) {
-            if (min.compareTo(p) > 0)
-                min = p;
-            if (max.compareTo(p) < 0)
-                max = p;
-        }
-
-        boolean add = true;
-
-        // Iterate over each point array in the segments array. Check if the origin point
-        // and the first point in the segment have the same slope, if they do don't add
-        // the segment. If no segment matches add the segment.
-        for (Point[] p : segments) {
-            double currentSlope = origin.slopeTo(segment.get(0));
-            double p1Slope = origin.slopeTo(p[0]);
-            double p2Slope = origin.slopeTo(p[1]);
-
-            if ((min == p[0] || Double.compare(currentSlope, p1Slope) == 0) &&
-                    (max == p[1] || Double.compare(currentSlope, p2Slope) == 0)) {
-                add = false;
-                break;
-            }
-        }
-
-        if (add)
-            segments.add(new Point[]{min, max});
+        if (curSegment.size() >= 3)
+            if (origin.compareTo(min) < 0 || origin.compareTo(max) > 0)
+                segments.add(new Point[]{min, max});
     }
 }
